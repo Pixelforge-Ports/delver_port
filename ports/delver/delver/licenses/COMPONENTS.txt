@@ -17,6 +17,7 @@ gptokeyb2
 
 libGDX
   Runtime Java API: 1.9.9
+  LWJGL3 controller bridge: 1.9.9
   ARM64 native and Matrix4 compatibility class: 1.10.0
   License: Apache License, Version 2.0
   Source: https://github.com/libgdx/libgdx/tree/gdx-parent-1.10.0

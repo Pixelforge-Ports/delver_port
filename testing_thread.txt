@@ -7,23 +7,27 @@ Requires Delver v1.08 from Steam depot 249631, manifest 6680730644186394716.
 Steam console command: download_depot 249630 249631 6680730644186394716
 Follow delver.md for the checksum and installation instructions. No game files are included.
 
+The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`. Direct gamepad input is disabled so physical joystick axes cannot also trigger attacks or drops. Use the right stick to point at a menu item and R2 to click; Start goes back. Two analog sticks are recommended for simultaneous movement and looking. Button labels follow the firmware's PortMaster controller mapping.
+
 | Button | Action |
 | --- | --- |
-| D-pad / left stick | Move forward/backward and strafe |
-| Right stick | Mouse look; move cursor in menus |
-| A | E / use, interact |
-| B | Left mouse button / attack, click |
-| X | I / inventory |
-| Y | M / map |
-| L1 / R1 | Turn left / right |
-| L2 (hold) + D-pad / left stick | Mouse look or menu cursor, including vertical look |
-| R2 | Left mouse button / attack, click |
-| Start | Escape / pause, options, back |
-| Select (hold) + A | Enter / menu confirm |
+| Left stick / D-pad | Move forward/backward and strafe (WASD) |
+| Right stick | Look / move menu cursor |
+| A | Use / interact (E) |
+| B | Jump (Space) |
+| X | Inventory (I) |
+| Y | Map (M) |
+| L1 / R1 | Previous / next item |
+| L2 | Drop item (Q) |
+| R2 | Attack / click menu or inventory item (left mouse) |
+| R3 (hold) | Slower mouse movement |
+| Start | Pause / options / back (Escape) |
+| Select (hold) + A | Enter / confirm |
 | Select (hold) + B | Escape / back |
-| Select (hold) + X | Q / drop item |
-| Select (hold) + L1 / R1 | Previous / next item |
+| Select (hold) + D-pad | Arrow keys |
 | Select + Start | PortMaster exit shortcut |
+
+Please verify: right-stick movement never attacks or drops an item; repeated R2 attacks do not drop it; L2 drops; B jumps while grounded; right-stick cursor movement and R2 clicks work in menus and inventory. Also check that the complete options menus fit the display. Test with existing saves as well as fresh settings. The startup log should report input=gptokeyb2 keyboard/mouse and native controllers=0. Control debug output is disabled; error logging remains enabled. Verify the software cursor, menu clicks, inventory dragging and continuous turning past the screen edges. The tester reports all controls working; further device and firmware testing is welcome.
 
 CFW tests (not yet verified on handheld):
 [ ] muOS: RG34XX SP / other H700 RGXX
@@ -43,5 +47,5 @@ Resolutions:
 [ ] 1024x768
 [ ] 1280x720
 
-Please test first launch, menus, stickless look controls, right-stick aiming, combat, inventory, item cycling, sound/music, normal speed, save/reload, suspend/resume and exit. Include dungeon frame rates and your graphics settings where possible.
+Please test first launch, menus, both sticks, face buttons, triggers, combat, inventory, item cycling, sound/music, normal speed, save/reload, suspend/resume and exit. Include dungeon frame rates and your graphics settings where possible.
 For problems attach delver/log.txt and reproduction steps. Do not attach purchased game files or personal information.

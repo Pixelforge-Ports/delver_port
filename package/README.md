@@ -45,27 +45,31 @@ On muOS, the game file belongs at `<SD card>/ports/delver/delver.jar`. For manua
 
 | Button | Action |
 | --- | --- |
-| D-pad / left stick | Move forward/backward and strafe |
-| Right stick | Mouse look; move cursor in menus |
-| A | E / use, interact |
-| B | Left mouse button / attack, click |
-| X | I / inventory |
-| Y | M / map |
-| L1 / R1 | Turn left / right |
-| L2 (hold) + D-pad / left stick | Mouse look or menu cursor, including vertical look |
-| R2 | Left mouse button / attack, click |
-| Start | Escape / pause, options, back |
-| Select (hold) + A | Enter / menu confirm |
+| Left stick / D-pad | Move forward/backward and strafe (WASD) |
+| Right stick | Look / move menu cursor |
+| A | Use / interact (E) |
+| B | Jump (Space) |
+| X | Inventory (I) |
+| Y | Map (M) |
+| L1 / R1 | Previous / next item |
+| L2 | Drop item (Q) |
+| R2 | Attack / click menu or inventory item (left mouse) |
+| R3 (hold) | Slower mouse movement |
+| Start | Pause / options / back (Escape) |
+| Select (hold) + A | Enter / confirm |
 | Select (hold) + B | Escape / back |
-| Select (hold) + X | Q / drop item |
-| Select (hold) + L1 / R1 | Previous / next item |
+| Select (hold) + D-pad | Arrow keys |
 | Select + Start | PortMaster exit shortcut |
 
-Keep the game's default keyboard bindings. On RG34XX SP and other handhelds without analog sticks, use the D-pad to move, L1/R1 to turn, and hold L2 with the D-pad to look vertically or move the menu cursor. Use B or R2 to click menu entries. A right stick gives independent mouse look on R36S and similar devices.
+The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`. Direct gamepad input is disabled so physical joystick axes cannot also trigger attacks or drops. On ARM64 Linux the host reads only gptokeyb2's `Fake Keyboard Mouse` event device directly, then delivers its mapped keys, mouse motion and clicks to the game. This bypasses desktop focus/event-delivery problems without re-enabling native joystick input. A software cursor is shown in menus. Use the right stick to point at a menu item and R2 to click; Start goes back. Two analog sticks are recommended for simultaneous movement and looking. Button labels follow the firmware's PortMaster controller mapping.
+
+The host restores the matching keyboard bindings on launch, including Space for jump and left mouse for attack. Existing saves can be kept; no settings deletion is needed. Adjust mouse sensitivity in the game or the mapping file if needed.
 
 ## Display and performance
 
 Screen dimensions come from PortMaster. The host accepts 640x480, 720x480, 720x720, 1024x768, 1280x720 and other valid sizes. If detection is wrong, put a single line such as `720x480` in `delver/resolution.txt`; use `auto` to restore detection. Keep the game's fullscreen and window-size settings at their launch defaults on the handheld.
+
+Options menus automatically scale down when needed to fit the display, including graphics and controller settings. R2 attacks and L2 drops items using separate mouse and keyboard inputs.
 
 The first launch disables shadows, FXAA and post-processing and chooses low graphics detail. These defaults can be adjusted in the game's graphics options. The host limits rendering to 60 frames per second; a lower device frame rate does not imply faster gameplay. Performance depends on the handheld and firmware. This is a 3D game, so test actual dungeon combat before judging performance from the menu.
 
@@ -73,7 +77,9 @@ The first launch disables shadows, FXAA and post-processing and chooses low grap
 
 Saves and game settings are in **`delver/save/`**. Preserve this folder when updating. Use the game's pause and quit flow to save before using Select + Start. Runtime temporary files are in `delver/cache/`; startup output is in **`delver/log.txt`**.
 
-When reporting a problem, include the device, firmware version, ROCKNIX graphics driver if applicable, resolution, JAR checksum and steps to reproduce. Attach the log and test menu navigation, mouse look, combat, sound, save/reload and exit. Keep purchased game files private.
+Control debug output is disabled to avoid continuous log writes during gameplay. Input failures and game errors are still logged. If the virtual device is missing, duplicated, unreadable or disconnected, the host reports the error instead of continuing with unusable controls. Close other running ports and restart if duplicate virtual devices are reported.
+
+When reporting a problem, include the device, firmware version, ROCKNIX graphics driver if applicable, resolution, JAR checksum and steps to reproduce. Attach the log and test menu navigation, both sticks, triggers, combat, sound, save/reload and exit. Keep purchased game files private.
 
 Steam achievements and Workshop integration are not active in the offline handheld launcher.
 

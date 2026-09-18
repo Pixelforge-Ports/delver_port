@@ -50,31 +50,19 @@ def verify(root):
     require(xml.findtext('path') == './'+config['script'], 'Wrong gameinfo path')
     require(xml.findtext('image') == './'+game+'/screenshot.png', 'Wrong image path')
     require(xml.findtext('developer') and xml.findtext('desc'), 'Incomplete gameinfo')
-    require(config['mapping'].endswith('.ini'), 'gptokeyb2 requires an INI mapping')
     launcher = files[config['script']].decode('utf-8')
-    require('$GPTOKEYB2 java -c ' in launcher, 'Launcher must use gptokeyb2')
+    require('$GPTOKEYB2 java -c "$GAMEDIR/delver.ini"' in launcher, 'Launcher must use gptokeyb2 keyboard/mouse mapping')
+    require('$GPTOKEYB2 java -x' not in launcher, 'Virtual Xbox input must be disabled')
+    require('-Ddelver.mappedInput=true' in launcher, 'Direct mapped-event delivery must be enabled')
+    mapping = configparser.ConfigParser(interpolation=None)
+    mapping.read_string(files[game+'/delver.ini'].decode('utf-8'))
+    require(mapping['controls']['right_analog'] == 'mouse_movement', 'Right stick must only move the mouse')
+    require(mapping['controls']['l2'] == 'q' and mapping['controls']['r2'] == 'mouse_left', 'Separate drop and attack inputs required')
+    require(mapping['controls']['b'] == 'space', 'Jump must be mapped')
     require('$GPTOKEYB ' not in launcher and 'TEXTINPUTINTERACTIVE' not in launcher, 'Legacy mapper setup')
     require(not any(n.endswith('.gptk') for n in files), 'Legacy mapping in package')
     require('export SDL_TOUCH_MOUSE_EVENTS=0' in launcher, 'Disable touch-generated mouse events')
-    mapping = files[game+'/'+config['mapping']].decode('utf-8')
-    cp = configparser.ConfigParser(interpolation=None, strict=True)
-    cp.read_string(mapping)
-    require(cp['controls']['start'] == 'esc', 'Start must open the pause/options menu')
-    if game == 'mewnbase':
-        require(cp['controls']['a'] == 'mouse_left' and cp['controls']['b'] == 'mouse_right', 'MewnBase needs real mouse buttons')
-    require(cp['controls'].get('overlay') == 'clear', 'Explicit root controls required')
-    require(cp['controls']['right_analog'] == 'mouse_movement' and cp['controls']['r2'] == 'mouse_left', 'Mouse aim/fire mapping required')
-    require(cp['controls']['l2'] == 'hold_state look' and cp['controls:look']['dpad'] == 'mouse_movement', 'Stickless look controls required')
-    for section in cp.sections():
-        for key, value in cp[section].items():
-            require(not key.endswith('_hk'), 'Use a v2 hotkey state')
-            if value.startswith(('hold_state ', 'push_state ', 'set_state ')):
-                require('controls:'+value.split()[1] in cp, 'Unknown control state')
-    if game == 'mewnbase':
-        require(cp['controls']['back'] == 'hold_state hotkey', 'Missing hotkey state')
-        require(cp['controls:hotkey']['l1'] == 'push_state text_input', 'Missing text entry')
-        require(cp['controls:text_input']['start'] == 'finish_text', 'Text confirmation missing')
-        require(cp['controls:text_input']['back'] == 'cancel_text', 'Text cancellation missing')
+    require(game+'/runtime/lib/gdx-controllers-lwjgl3-1.9.9.jar' in files, 'Missing controller API runtime')
     license_root = game+'/licenses/'
     require(b'GNU GENERAL PUBLIC LICENSE' in files[license_root+'LICENSE-gptokeyb.txt'], 'Missing gptokeyb license')
     own = files[license_root+'LICENSE-'+game+'.txt']
@@ -84,6 +72,7 @@ def verify(root):
         require(b'Copyright (c) 2026 Pixelforge Ports contributors' in data and b'Permission is hereby granted' in data, 'Missing host/port MIT terms')
     with zipfile.ZipFile(io.BytesIO(files[game+'/runtime/'+game+'-host.jar'])) as host:
         require(bool(host.namelist()), 'Empty host')
+        require('org/portmaster/delver/MappedInput.class' in host.namelist(), 'Missing mapped input reader; rebuild the host')
         require(all(n.startswith('org/portmaster/'+game+'/') and n.endswith('.class') for n in host.namelist()), 'Game or compile-only classes leaked into host')
     for name, data in files.items():
         require((root/'ports'/game/name).read_bytes() == data, 'Stale public tree: '+name)

@@ -4,6 +4,6 @@
   "script": "Delver.sh",
   "zip": "Delver.zip",
   "game_file": "delver.jar",
-  "mapping": "delver.ini",
-  "runtime_libraries": true
+  "runtime_libraries": true,
+  "mapping": "delver.ini"
 }

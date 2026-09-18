@@ -12,6 +12,12 @@
     "sha256": "ea24c28414cff31fc90cbe47cb2bb74f3b263430857e06a9c6b889a0f2f1dba6"
   },
   {
+    "name": "gdx-controllers-lwjgl3-1.9.9.jar",
+    "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx-controllers-lwjgl3/1.9.9/gdx-controllers-lwjgl3-1.9.9.jar",
+    "role": "runtime",
+    "sha256": "50fb40f95f92b4beb310e1b728aba90990105b91e8b06396d6e33d5e19054a7a"
+  },
+  {
     "name": "gdx-platform-1.10.0-natives-desktop.jar",
     "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx-platform/1.10.0/gdx-platform-1.10.0-natives-desktop.jar",
     "role": "native-source",

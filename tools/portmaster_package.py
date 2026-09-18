@@ -13,8 +13,9 @@ def public_files(root):
     package = root/'package'
     game = config['id']
     names = [config['script'], 'port.json', 'README.md', 'gameinfo.xml', 'screenshot.png',
-             game+'/display.inc', game+'/'+config['mapping'],
-             game+'/runtime/'+game+'-host.jar']
+             game+'/display.inc', game+'/runtime/'+game+'-host.jar']
+    if config.get('mapping'):
+        names.append(game+'/'+config['mapping'])
     names += [p.relative_to(package).as_posix()
               for p in sorted((package/game/'licenses').iterdir()) if p.is_file()]
     lock = root/'build/runtime-files.json'

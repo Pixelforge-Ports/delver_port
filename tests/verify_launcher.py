@@ -70,7 +70,7 @@ if [[ "$TEST_GAME" == mewnbase ]]; then printf '1.0.1' > "$TEST_ROOT/ports/mewnb
 exit 0
 ''')
     write(fixtures/'probes/mapper','''#!/bin/bash
-[[ "$TEST_MAPPER" == 1 && "$1" == java && "$2" == -c && "$3" == */"$TEST_MAPPING" ]] || exit 2
+[[ "$TEST_MAPPER" == 1 && "$1" == java && "$2" == -c && "$3" == "$TEST_ROOT/ports/delver/delver.ini" && -f "$3" ]] || exit 2
 echo mapper >> "$TEST_ROOT/events"
 exec /usr/bin/sleep 30
 ''')
@@ -81,6 +81,7 @@ if [[ "$1" == cleanup ]]; then
 fi
 [[ "$1 $2 $3 $4" == 'headless noop kiosk crusty_glx_gl4es' ]] || exit 3
 [[ "$WESTON_HEADLESS_WIDTH" == 720 && "$WESTON_HEADLESS_HEIGHT" == 480 ]] || exit 4
+[[ "$*" == *'-Ddelver.mappedInput=true'* ]] || exit 10
 [[ "$*" == *"-D$TEST_GAME.width=720"* && "$*" == *"-D$TEST_GAME.height=480"* ]] || exit 5
 if [[ "$TEST_GAME" == gunslugs3 ]]; then [[ "$*" == *'runtime/lib/*:'* ]] || exit 6; fi
 if [[ "$TEST_GAME" == mewnbase ]]; then
@@ -99,7 +100,7 @@ exit 0
     # Force fixture discovery even on a machine with a real PortMaster installed.
     launcher=launcher.replace('/opt/system/Tools/PortMaster',sf+'/absent1').replace('/opt/tools/PortMaster',sf+'/absent2')
     write(fixtures/'launcher.sh',launcher)
-    env=dict(os.environ,TEST_ROOT=sf,TEST_CASE=case,TEST_GAME=game,TEST_MAPPING=config['mapping'])
+    env=dict(os.environ,TEST_ROOT=sf,TEST_CASE=case,TEST_GAME=game)
     command='export PATH=/usr/bin:$PATH; export HOME="$TEST_ROOT/home" XDG_DATA_HOME="$TEST_ROOT/home/.local/share"; chmod +x "$TEST_ROOT/probes/"* "$TEST_ROOT/home/.local/share/PortMaster/harbourmaster"; bash "$TEST_ROOT/launcher.sh"'
     result=subprocess.run([bash,'-c',command],env=env,capture_output=True,text=True,timeout=20)
     write(fixtures/'test.log',result.stdout+result.stderr)

@@ -10,8 +10,11 @@ import java.lang.reflect.*;
 /** Starts the owner's unchanged game on an ARM-capable desktop backend. */
 public final class Main implements ApplicationListener {
  private ApplicationListener game;
+ private MappedInput mappedInput;
  private int frames;
  private long start, lastFrame;
+ private final java.util.Set<com.badlogic.gdx.scenes.scene2d.ui.Table> fittedTables=java.util.Collections.newSetFromMap(new java.util.WeakHashMap<com.badlogic.gdx.scenes.scene2d.ui.Table,Boolean>());
+ private boolean overlayFitFailed;
  public static void main(String[] args) throws Exception {
   VerifyGame.check(Paths.get(System.getProperty("delver.jar","delver.jar")));
   loadNatives();
@@ -53,15 +56,74 @@ public final class Main implements ApplicationListener {
   System.load(nativeFile.toAbsolutePath().toString());GdxNativesLoader.disableNativesLoading=true;
  }
  @Override public void create(){
-  try{game=(ApplicationListener)Class.forName("com.interrupt.dungeoneer.GameApplication").getDeclaredConstructor().newInstance();game.create();start=System.nanoTime();System.out.println("GAME_CREATE_OK Delver v1.08; offline; keyboard/mouse");}
-  catch(Exception e){throw new RuntimeException(e);}
+  try{
+   if(Boolean.getBoolean("delver.mappedInput"))mappedInput=new MappedInput(Gdx.input);
+   game=(ApplicationListener)Class.forName("com.interrupt.dungeoneer.GameApplication").getDeclaredConstructor().newInstance();
+   game.create();
+   configureKeyboardControls();
+   int controllers=((com.badlogic.gdx.utils.Array<?>)Class.forName("com.badlogic.gdx.controllers.Controllers").getMethod("getControllers").invoke(null)).size;
+   if(controllers!=0)throw new IllegalStateException("Direct controller input must be disabled");
+   start=System.nanoTime();
+   System.out.println("GAME_CREATE_OK Delver v1.08; offline; input=gptokeyb2 keyboard/mouse; native controllers=0; attack=R2; drop=L2; jump=B");
+  }catch(Exception e){throw new RuntimeException(e);}
  }
- @Override public void resize(int w,int h){if(game!=null)game.resize(w,h);}
+ private static void configureKeyboardControls() throws Exception {
+  Class<?> actions=Class.forName("com.interrupt.dungeoneer.input.Actions");
+  Class<?> action=Class.forName("com.interrupt.dungeoneer.input.Actions$Action");
+  Method valueOf=action.getMethod("valueOf",String.class);
+  Object bindings=actions.getField("keyBindings").get(null);
+  Method put=bindings.getClass().getMethod("put",Object.class,Object.class);
+  String[] names={"FORWARD","BACKWARD","STRAFE_LEFT","STRAFE_RIGHT","USE","ATTACK","DROP","JUMP","INVENTORY","MAP","ITEM_PREVIOUS","ITEM_NEXT","PAUSE","MENU_SELECT","MENU_CANCEL"};
+  int[] keys={Input.Keys.W,Input.Keys.S,Input.Keys.A,Input.Keys.D,Input.Keys.E,Input.Keys.CONTROL_LEFT,Input.Keys.Q,Input.Keys.SPACE,Input.Keys.I,Input.Keys.M,Input.Keys.LEFT_BRACKET,Input.Keys.RIGHT_BRACKET,Input.Keys.ESCAPE,Input.Keys.ENTER,Input.Keys.ESCAPE};
+  for(int i=0;i<names.length;i++)put.invoke(bindings,valueOf.invoke(null,names[i]),keys[i]);
+  Class<?> options=Class.forName("com.interrupt.dungeoneer.game.Options");
+  options.getField("mouseButton1Action").set(options.getField("instance").get(null),valueOf.invoke(null,"ATTACK"));
+ }
+ private void fitOptionsOverlay(){
+  if(overlayFitFailed)return;
+  try{
+   Class<?> manager=Class.forName("com.interrupt.dungeoneer.overlays.OverlayManager");
+   Object overlay=manager.getMethod("current").invoke(manager.getField("instance").get(null));
+   if(overlay==null)return;
+   if(!overlay.getClass().getSimpleName().startsWith("Options"))return;
+   Class<?> window=Class.forName("com.interrupt.dungeoneer.overlays.WindowOverlay");
+   if(!window.isInstance(overlay))return;
+   Field ui=Class.forName("com.interrupt.dungeoneer.overlays.Overlay").getDeclaredField("ui");
+   ui.setAccessible(true);
+   final com.badlogic.gdx.scenes.scene2d.Stage stage=(com.badlogic.gdx.scenes.scene2d.Stage)ui.get(overlay);
+   final com.badlogic.gdx.scenes.scene2d.ui.Table table=(com.badlogic.gdx.scenes.scene2d.ui.Table)window.getField("stageTable").get(overlay);
+   if(stage==null || table==null || fittedTables.contains(table))return;
+   // Stage actions run after the game's option/resize updates, before drawing.
+   table.addAction(new com.badlogic.gdx.scenes.scene2d.Action(){
+    @Override public boolean act(float delta){
+     com.badlogic.gdx.utils.viewport.Viewport viewport=stage.getViewport();
+     int w=Gdx.graphics.getWidth(),h=Gdx.graphics.getHeight();
+     if(w<=0 || h<=0)return false;
+     float units=Math.max(viewport.getWorldWidth()/w,viewport.getWorldHeight()/h);
+     units=Math.max(units,Math.max((table.getPrefWidth()+16f)/w,(table.getPrefHeight()+16f)/h));
+     float worldWidth=w*units,worldHeight=h*units;
+     if(Math.abs(viewport.getWorldWidth()-worldWidth)>0.01f || Math.abs(viewport.getWorldHeight()-worldHeight)>0.01f){
+      viewport.setWorldSize(worldWidth,worldHeight);
+      viewport.update(w,h,true);
+      table.invalidateHierarchy();
+     }
+     return false;
+    }
+   });
+   fittedTables.add(table);
+   System.out.println("OPTIONS_FIT enabled: "+overlay.getClass().getSimpleName());
+  }catch(Exception e){overlayFitFailed=true;System.err.println("OPTIONS_FIT failed: "+e);}
+ }
+ @Override public void resize(int w,int h){if(mappedInput!=null)mappedInput.install();if(game!=null)game.resize(w,h);}
  @Override public void render(){
   long now=System.nanoTime();
   while(lastFrame!=0 && now-lastFrame<16666667L){java.util.concurrent.locks.LockSupport.parkNanos(16666667L-(now-lastFrame));now=System.nanoTime();}
   lastFrame=now;
-  game.render();frames++;
+  if(mappedInput!=null)mappedInput.beginFrame();
+  fitOptionsOverlay();
+  game.render();
+  if(mappedInput!=null)mappedInput.drawCursor();
+  frames++;
   int smoke=Integer.getInteger("delver.smokeFrames",0);
   if(smoke>0 && frames==180 && Boolean.getBoolean("delver.smokeGameplay")) {
    try{Class.forName("com.interrupt.dungeoneer.GameApplication").getMethod("ShowMainScreen").invoke(null);System.out.println("GAMEPLAY_ENTERED");}
@@ -74,9 +136,10 @@ public final class Main implements ApplicationListener {
    new Thread(new Runnable(){@Override public void run(){try{Thread.sleep(500);}catch(InterruptedException ignored){}System.exit(0);}},"delver-smoke-exit").start();
   }
  }
- @Override public void pause(){if(game!=null)game.pause();}
- @Override public void resume(){if(game!=null)game.resume();}
+ @Override public void pause(){if(mappedInput!=null)mappedInput.install();if(game!=null)game.pause();}
+ @Override public void resume(){if(mappedInput!=null)mappedInput.install();if(game!=null)game.resume();}
  @Override public void dispose(){
+  if(mappedInput!=null)mappedInput.close();
   if(game!=null){game.pause();game.dispose();}
   try{Class.forName("com.interrupt.dungeoneer.game.Options").getMethod("saveOptions").invoke(null);}
   catch(Exception e){throw new RuntimeException("Cannot save settings",e);}
