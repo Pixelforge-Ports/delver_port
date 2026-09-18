@@ -1,0 +1,82 @@
+## Notes
+
+Thanks to [Priority Interrupt](https://store.steampowered.com/app/249630/Delver/) for Delver, a first-person dungeon crawler with changing layouts and dangerous treasure hunts.
+
+Porter: **Pixelforge ports (Ronax)**. This package targets compatible 64-bit ARM Linux handheld firmware using PortMaster, Java 17 and Westonpack. Update PortMaster before installing.
+
+## Get delver.jar from Steam
+
+This port requires **Delver v1.08, Windows Steam depot 249631, manifest 6680730644186394716**. The supplied installation folder was labeled build 7583356. The exact manifest and JAR fingerprint below identify the supported input.
+
+1. Own Delver on Steam and sign into the Steam desktop client with that account.
+2. Press Windows + R, enter `steam://open/console`, and press Enter.
+3. In Steam's Console tab, enter the following command, without quotes or asterisks:
+
+```text
+download_depot 249630 249631 6680730644186394716
+```
+
+4. Wait for Steam to report that the depot download has completed. Open the directory printed by Steam, usually `<Steam>/steamapps/content/app_249630/depot_249631/`.
+5. Copy **delver.jar** into the installed port's **delver** folder. Keep the filename lowercase and leave the JAR intact. Do not copy DelvEdit.jar, the EXE launchers, the Windows JRE or steam_appid.txt.
+
+Required `delver.jar`: **69,330,539 bytes**. SHA-256:
+
+```text
+a2d58e87b09f588ff8389508e43accf7d3c6ce949b5aa4d31d6380574ec095ae
+```
+
+Check it in PowerShell:
+
+```powershell
+Get-FileHash -Algorithm SHA256 -LiteralPath "C:\path\to\depot_249631\delver.jar"
+```
+
+A current Steam download or a different depot manifest is not automatically compatible. If Steam cannot download this manifest, confirm ownership and report the console error; do not substitute an unrelated JAR. No PC conversion is needed: the handheld reads the owned JAR directly. The port cannot create purchased game data without it.
+
+## Installation
+
+1. Copy **Delver.zip** to PortMaster's `autoinstall/` folder and open PortMaster. Keep the handheld online for any required runtime downloads.
+2. Copy the verified game JAR to **`<ports directory>/delver/delver.jar`**.
+3. Refresh the firmware's ports list if needed, then launch **Delver**.
+
+On muOS, the game file belongs at `<SD card>/ports/delver/delver.jar`. For manual installation, extract the ZIP, put `Delver.sh` in `<SD card>/roms/PORTS/`, and put `delver/` in `<SD card>/ports/` on the same card. On ArkOS/dArkOS and standard PortMaster layouts, put `Delver.sh` beside `delver/` in the configured ports directory. Do not add an extra wrapping folder.
+
+## Controls
+
+| Button | Action |
+| --- | --- |
+| D-pad / left stick | Move forward/backward and strafe |
+| Right stick | Mouse look; move cursor in menus |
+| A | E / use, interact |
+| B | Left mouse button / attack, click |
+| X | I / inventory |
+| Y | M / map |
+| L1 / R1 | Turn left / right |
+| L2 (hold) + D-pad / left stick | Mouse look or menu cursor, including vertical look |
+| R2 | Left mouse button / attack, click |
+| Start | Escape / pause, options, back |
+| Select (hold) + A | Enter / menu confirm |
+| Select (hold) + B | Escape / back |
+| Select (hold) + X | Q / drop item |
+| Select (hold) + L1 / R1 | Previous / next item |
+| Select + Start | PortMaster exit shortcut |
+
+Keep the game's default keyboard bindings. On RG34XX SP and other handhelds without analog sticks, use the D-pad to move, L1/R1 to turn, and hold L2 with the D-pad to look vertically or move the menu cursor. Use B or R2 to click menu entries. A right stick gives independent mouse look on R36S and similar devices.
+
+## Display and performance
+
+Screen dimensions come from PortMaster. The host accepts 640x480, 720x480, 720x720, 1024x768, 1280x720 and other valid sizes. If detection is wrong, put a single line such as `720x480` in `delver/resolution.txt`; use `auto` to restore detection. Keep the game's fullscreen and window-size settings at their launch defaults on the handheld.
+
+The first launch disables shadows, FXAA and post-processing and chooses low graphics detail. These defaults can be adjusted in the game's graphics options. The host limits rendering to 60 frames per second; a lower device frame rate does not imply faster gameplay. Performance depends on the handheld and firmware. This is a 3D game, so test actual dungeon combat before judging performance from the menu.
+
+## Saves and troubleshooting
+
+Saves and game settings are in **`delver/save/`**. Preserve this folder when updating. Use the game's pause and quit flow to save before using Select + Start. Runtime temporary files are in `delver/cache/`; startup output is in **`delver/log.txt`**.
+
+When reporting a problem, include the device, firmware version, ROCKNIX graphics driver if applicable, resolution, JAR checksum and steps to reproduce. Attach the log and test menu navigation, mouse look, combat, sound, save/reload and exit. Keep purchased game files private.
+
+Steam achievements and Workshop integration are not active in the offline handheld launcher.
+
+## Licenses
+
+Original port and host code: MIT. Component notices for the host, gptokeyb, libGDX, LWJGL, GLFW, OpenAL Soft and stb are in `delver/licenses/`. Java and Westonpack are provided separately by PortMaster. The original game and its assets retain their own terms.

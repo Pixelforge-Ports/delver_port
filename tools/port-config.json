@@ -1,0 +1,9 @@
+{
+  "id": "delver",
+  "title": "Delver",
+  "script": "Delver.sh",
+  "zip": "Delver.zip",
+  "game_file": "delver.jar",
+  "mapping": "delver.ini",
+  "runtime_libraries": true
+}

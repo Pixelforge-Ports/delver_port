@@ -1,0 +1,43 @@
+{
+  "version": 4,
+  "name": "delver.zip",
+  "items": [
+    "Delver.sh",
+    "delver"
+  ],
+  "items_opt": [],
+  "attr": {
+    "title": "Delver",
+    "porter": [
+      "Pixelforge ports (Ronax)"
+    ],
+    "desc": "Explore shifting dungeons in a first-person roguelike filled with monsters, loot and secrets.",
+    "desc_md": null,
+    "inst": "Copy delver.jar from Steam Windows depot 249631 manifest 6680730644186394716 (Delver v1.08) into ports/delver/. See delver.md for the Steam console command. No conversion is needed.",
+    "inst_md": null,
+    "genres": [
+      "rpg",
+      "fps"
+    ],
+    "image": null,
+    "rtr": false,
+    "exp": false,
+    "runtime": [
+      "weston_pkg_0.2.squashfs",
+      "zulu17.54.21-ca-jre17.0.13-linux.squashfs"
+    ],
+    "reqs": [],
+    "arch": [
+      "aarch64"
+    ],
+    "min_glibc": "2.27",
+    "availability": "paid",
+    "store": [
+      {
+        "name": "Steam",
+        "gameurl": "https://store.steampowered.com/app/249630/Delver/",
+        "developerurl": "https://store.steampowered.com/app/249630/Delver/"
+      }
+    ]
+  }
+}

@@ -1,0 +1,48 @@
+Delver PortMaster package component notices
+
+The package does not contain delver.jar. The user supplies that paid game
+file separately. Delver and its game assets remain property of their
+respective copyright holders and are not relicensed by this package.
+
+Port files and delver-host.jar
+  Copyright (c) 2026 Pixelforge Ports contributors
+  License: MIT
+  Source: this repository
+
+gptokeyb2
+  License: GNU General Public License, version 3
+  Source: https://github.com/PortsMaster/gptokeyb2
+  The executable is supplied by PortMaster, not in this ZIP. Its license is
+  included because this package contains a gptokeyb2 control mapping.
+
+libGDX
+  Runtime Java API: 1.9.9
+  ARM64 native and Matrix4 compatibility class: 1.10.0
+  License: Apache License, Version 2.0
+  Source: https://github.com/libgdx/libgdx/tree/gdx-parent-1.10.0
+
+LWJGL
+  Version: 3.3.3
+  License: BSD 3-Clause License
+  Source: https://github.com/LWJGL/lwjgl3/tree/3.3.3
+
+GLFW
+  Bundled through LWJGL native artifacts, version 3.4.0
+  License: zlib/libpng License
+  Source: https://github.com/glfw/glfw/tree/3.4
+
+OpenAL Soft
+  Bundled through LWJGL native artifacts, version 1.23.1
+  License: GNU Lesser General Public License, version 2.1 or later
+  Source: https://github.com/kcat/openal-soft/tree/1.23.1
+  The shared library is dynamically loaded from the normal LWJGL native JAR.
+  It can be replaced with a compatible build. Corresponding source is
+  available from the source link above.
+
+stb
+  Bundled through LWJGL native artifacts.
+  License: MIT License or public domain, at the user's option.
+  Source: https://github.com/nothings/stb
+
+Java and Westonpack are obtained separately by PortMaster at installation
+time and are not distributed by this ZIP.

@@ -1,0 +1,1 @@
+Delver game code, artwork and screenshots belong to Priority Interrupt and their respective creators. Purchased game files are not included in this package. screenshot.png is an unmodified framebuffer capture from the port host running the owned Steam game on Windows; it is not a handheld test result.

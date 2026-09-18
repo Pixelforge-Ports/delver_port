@@ -1,0 +1,98 @@
+[
+  {
+    "name": "gdx-1.9.9.jar",
+    "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx/1.9.9/gdx-1.9.9.jar",
+    "role": "compile",
+    "sha256": "7eb045736364c5a4a09ca8df4500a6b0b85b6c6a62aa6ee9001ae22bcb197034"
+  },
+  {
+    "name": "gdx-backend-lwjgl3-1.9.9.jar",
+    "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx-backend-lwjgl3/1.9.9/gdx-backend-lwjgl3-1.9.9.jar",
+    "role": "runtime",
+    "sha256": "ea24c28414cff31fc90cbe47cb2bb74f3b263430857e06a9c6b889a0f2f1dba6"
+  },
+  {
+    "name": "gdx-platform-1.10.0-natives-desktop.jar",
+    "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx-platform/1.10.0/gdx-platform-1.10.0-natives-desktop.jar",
+    "role": "native-source",
+    "sha256": "094bc892bf94212ce674bb5a3beb14c98530c1ff6f69cd4e438b93a6f5566ac9"
+  },
+  {
+    "name": "lwjgl-3.3.3.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl/3.3.3/lwjgl-3.3.3.jar",
+    "role": "runtime",
+    "sha256": "dc9c7b2d48e8396d68895f8902ffa01e46253de44dfe927533ff09457ebfeec4"
+  },
+  {
+    "name": "lwjgl-3.3.3-natives-linux-arm64.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl/3.3.3/lwjgl-3.3.3-natives-linux-arm64.jar",
+    "role": "runtime",
+    "sha256": "397a79a5d8907286d4018d026cbc37358c53bbb6aabc3a1534f19ff23b7f8558"
+  },
+  {
+    "name": "lwjgl-3.3.3-natives-windows.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl/3.3.3/lwjgl-3.3.3-natives-windows.jar",
+    "role": "test",
+    "sha256": "5ee63a19187efe5bb8747fd24f7b13257db348df5ad641113a3695e43f213959"
+  },
+  {
+    "name": "lwjgl-glfw-3.3.3.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-glfw/3.3.3/lwjgl-glfw-3.3.3.jar",
+    "role": "runtime",
+    "sha256": "bedc757fd2b1b255146db26b74b9cbd1fcf5644b89b47b104fa721c741604259"
+  },
+  {
+    "name": "lwjgl-glfw-3.3.3-natives-linux-arm64.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-glfw/3.3.3/lwjgl-glfw-3.3.3-natives-linux-arm64.jar",
+    "role": "runtime",
+    "sha256": "cc6139c83f799d0e1484ea4c201c8ce6d57c8c7a244a5217116a806b1eb4179b"
+  },
+  {
+    "name": "lwjgl-glfw-3.3.3-natives-windows.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-glfw/3.3.3/lwjgl-glfw-3.3.3-natives-windows.jar",
+    "role": "test",
+    "sha256": "98155b451dfc6f585089dec77a12f9c05789c4dceb8da472f9d308160101a70d"
+  },
+  {
+    "name": "lwjgl-opengl-3.3.3.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-opengl/3.3.3/lwjgl-opengl-3.3.3.jar",
+    "role": "runtime",
+    "sha256": "5062da750e5f7ec89e27e8b67b7d40fa8c4b16890159e35f828116ce6c8eca1e"
+  },
+  {
+    "name": "lwjgl-opengl-3.3.3-natives-linux-arm64.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-opengl/3.3.3/lwjgl-opengl-3.3.3-natives-linux-arm64.jar",
+    "role": "runtime",
+    "sha256": "0b2b75327d47451634123348d55503ae03e51551b0c8879ae90c8e4b4e1a4f9c"
+  },
+  {
+    "name": "lwjgl-opengl-3.3.3-natives-windows.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-opengl/3.3.3/lwjgl-opengl-3.3.3-natives-windows.jar",
+    "role": "test",
+    "sha256": "f45e5f60596b03b2e3d8b98a123c855ebd0b5154c8155dc2a56b890ccc907477"
+  },
+  {
+    "name": "lwjgl-openal-3.3.3.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-openal/3.3.3/lwjgl-openal-3.3.3.jar",
+    "role": "runtime",
+    "sha256": "ae0e82767cacf08921f578fba9d84753ddeb00ceada0510a2b4a882be28fbf95"
+  },
+  {
+    "name": "lwjgl-openal-3.3.3-natives-linux-arm64.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-openal/3.3.3/lwjgl-openal-3.3.3-natives-linux-arm64.jar",
+    "role": "runtime",
+    "sha256": "abf392487b3587da89b655250008df4a360a2fd5e1ee00abd61f7f52915205a1"
+  },
+  {
+    "name": "lwjgl-openal-3.3.3-natives-windows.jar",
+    "url": "https://repo.maven.apache.org/maven2/org/lwjgl/lwjgl-openal/3.3.3/lwjgl-openal-3.3.3-natives-windows.jar",
+    "role": "test",
+    "sha256": "e3da7c3db25c81db8d425ef1e3dbfa15000b040d669f008b0813c94333ac96c8"
+  },
+  {
+    "name": "gdx-1.10.0.jar",
+    "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx/1.10.0/gdx-1.10.0.jar",
+    "sha256": "ffb49b06711e34b1a175df17311b0f3ae0e85bf46c569a137ec00d291bb2cae1",
+    "role": "compat-source"
+  }
+]

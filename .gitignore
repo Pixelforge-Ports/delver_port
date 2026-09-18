@@ -1,0 +1,8 @@
+build/
+dist/
+__pycache__/
+*.pyc
+package/delver/delver.jar
+package/delver/save/
+package/delver/cache/
+package/delver/log.txt

@@ -1,0 +1,47 @@
+Delver testing build
+Porter: Pixelforge ports (Ronax)
+Game: https://store.steampowered.com/app/249630/Delver/
+
+Install Delver.zip through PortMaster's autoinstall folder. Copy your owned delver.jar to ports/delver/delver.jar.
+Requires Delver v1.08 from Steam depot 249631, manifest 6680730644186394716.
+Steam console command: download_depot 249630 249631 6680730644186394716
+Follow delver.md for the checksum and installation instructions. No game files are included.
+
+| Button | Action |
+| --- | --- |
+| D-pad / left stick | Move forward/backward and strafe |
+| Right stick | Mouse look; move cursor in menus |
+| A | E / use, interact |
+| B | Left mouse button / attack, click |
+| X | I / inventory |
+| Y | M / map |
+| L1 / R1 | Turn left / right |
+| L2 (hold) + D-pad / left stick | Mouse look or menu cursor, including vertical look |
+| R2 | Left mouse button / attack, click |
+| Start | Escape / pause, options, back |
+| Select (hold) + A | Enter / menu confirm |
+| Select (hold) + B | Escape / back |
+| Select (hold) + X | Q / drop item |
+| Select (hold) + L1 / R1 | Previous / next item |
+| Select + Start | PortMaster exit shortcut |
+
+CFW tests (not yet verified on handheld):
+[ ] muOS: RG34XX SP / other H700 RGXX
+[ ] ArkOS / dArkOS: R36S
+[ ] AmberELEC
+ROCKNIX:
+[ ] LibMali
+[ ] Panfrost
+[ ] Adreno
+[ ] Knulli
+[ ] Other compatible ARM64 firmware
+
+Resolutions:
+[ ] 640x480
+[ ] 720x480
+[ ] 720x720
+[ ] 1024x768
+[ ] 1280x720
+
+Please test first launch, menus, stickless look controls, right-stick aiming, combat, inventory, item cycling, sound/music, normal speed, save/reload, suspend/resume and exit. Include dungeon frame rates and your graphics settings where possible.
+For problems attach delver/log.txt and reproduction steps. Do not attach purchased game files or personal information.
