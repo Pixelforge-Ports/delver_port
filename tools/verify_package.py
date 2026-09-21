@@ -46,9 +46,12 @@ def verify(root):
     require(png.startswith(b'\x89PNG\r\n\x1a\n'), 'Missing PNG screenshot')
     width, height = struct.unpack('>II', png[16:24])
     require(width >= 640 and height >= 480, 'Screenshot below 640x480')
+    cover = files['cover.png']
+    require(cover.startswith(b'\x89PNG\r\n\x1a\n'), 'Missing PNG cover')
+    require(struct.unpack('>II', cover[16:24]) == (640, 480), 'Cover must be 640x480')
     xml = ET.fromstring(files['gameinfo.xml']).find('game')
     require(xml.findtext('path') == './'+config['script'], 'Wrong gameinfo path')
-    require(xml.findtext('image') == './'+game+'/screenshot.png', 'Wrong image path')
+    require(xml.findtext('image') == './'+game+'/cover.png', 'Wrong image path')
     require(xml.findtext('developer') and xml.findtext('desc'), 'Incomplete gameinfo')
     launcher = files[config['script']].decode('utf-8')
     require('$GPTOKEYB2 java -c "$GAMEDIR/delver.ini"' in launcher, 'Launcher must use gptokeyb2 keyboard/mouse mapping')
