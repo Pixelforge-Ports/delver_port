@@ -1,0 +1,10 @@
+{
+  "mouseXSensitivity": 3,
+  "mouseYSensitivity": 3,
+  "fullScreen": true,
+  "shadowsEnabled": false,
+  "alwaysShowCrosshair": true,
+  "key_attack": -1,
+  "key_jump": 62,
+  "graphicsDetailLevel": 1
+}

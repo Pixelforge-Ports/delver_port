@@ -7,7 +7,7 @@ Requires Delver v1.08 from Steam depot 249631, manifest 6680730644186394716.
 Steam console command: download_depot 249630 249631 6680730644186394716
 Follow delver.md for the checksum and installation instructions. No game files are included.
 
-The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`. Direct gamepad input is disabled so physical joystick axes cannot also trigger attacks or drops. Use the right stick to point at a menu item and R2 to click; Start goes back. Two analog sticks are recommended for simultaneous movement and looking. Button labels follow the firmware's PortMaster controller mapping.
+The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`. Direct gamepad input is disabled so physical joystick axes cannot also trigger attacks or drops. Use the right stick to point at a menu item, R2 to click it, A to confirm, and Start to go back. In gameplay, R2's left-mouse click activates the attack action. Two analog sticks are recommended for simultaneous movement and looking. Button labels follow the firmware's PortMaster controller mapping.
 
 | Button | Action |
 | --- | --- |
@@ -27,7 +27,7 @@ The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`
 | Select (hold) + D-pad | Arrow keys |
 | Select + Start | PortMaster exit shortcut |
 
-Please verify: right-stick movement never attacks or drops an item; repeated R2 attacks do not drop it; L2 drops; B jumps while grounded; right-stick cursor movement and R2 clicks work in menus and inventory. Also check that the complete options menus fit the display. Test with existing saves as well as fresh settings. The startup log should report input=gptokeyb2 keyboard/mouse and native controllers=0. Control debug output is disabled; error logging remains enabled. Verify the software cursor, menu clicks, inventory dragging and continuous turning past the screen edges. The tester reports all controls working; further device and firmware testing is welcome.
+Please verify: right-stick movement never attacks or drops an item; R2 selects save/menu items and attacks during gameplay; L2 drops; B jumps while grounded; right-stick cursor movement and R2 clicks work in menus and inventory. Also check that the complete options menus fit the display. Test with existing saves as well as fresh settings. The startup log should report input=gptokeyb2 keyboard/mouse and native controllers=0. Control debug output is disabled; error logging remains enabled. Verify the software cursor, R2 menu clicks, inventory dragging and continuous turning past the screen edges. The tester reports all controls working; further device and firmware testing is welcome.
 
 CFW tests (not yet verified on handheld):
 [ ] muOS: RG34XX SP / other H700 RGXX

@@ -21,7 +21,15 @@ public final class Main implements ApplicationListener {
   Class.forName("com.badlogic.gdx.controllers.Controllers").getField("preferredManager").set(null,"com.badlogic.gdx.controllers.ControllerManagerStub");
   Class.forName("com.interrupt.api.steam.SteamApi").getField("api").set(null,Class.forName("com.interrupt.api.steam.NullSteamApi").getDeclaredConstructor().newInstance());
   Class<?> options=Class.forName("com.interrupt.dungeoneer.game.Options");
-  boolean fresh=!java.nio.file.Files.exists(Paths.get("save/options.txt"));
+  Path savedOptions=Paths.get("save/options.txt");
+  boolean fresh=!java.nio.file.Files.exists(savedOptions);
+  if(fresh){
+   Path defaultOptions=Paths.get("options.txt");
+   if(java.nio.file.Files.isRegularFile(defaultOptions)){
+    java.nio.file.Files.createDirectories(savedOptions.getParent());
+    java.nio.file.Files.copy(defaultOptions,savedOptions);
+   }
+  }
   options.getMethod("loadOptions").invoke(null);
   Object settings=options.getField("instance").get(null);
   if(fresh){
@@ -64,7 +72,7 @@ public final class Main implements ApplicationListener {
    int controllers=((com.badlogic.gdx.utils.Array<?>)Class.forName("com.badlogic.gdx.controllers.Controllers").getMethod("getControllers").invoke(null)).size;
    if(controllers!=0)throw new IllegalStateException("Direct controller input must be disabled");
    start=System.nanoTime();
-   System.out.println("GAME_CREATE_OK Delver v1.08; offline; input=gptokeyb2 keyboard/mouse; native controllers=0; attack=R2; drop=L2; jump=B");
+   System.out.println("GAME_CREATE_OK Delver v1.08; offline; input=gptokeyb2 keyboard/mouse; native controllers=0; attack=R2(mouse); drop=L2; jump=B(space)");
   }catch(Exception e){throw new RuntimeException(e);}
  }
  private static void configureKeyboardControls() throws Exception {

@@ -61,15 +61,15 @@ On muOS, the game file belongs at `<SD card>/ports/delver/delver.jar`. For manua
 | Select (hold) + D-pad | Arrow keys |
 | Select + Start | PortMaster exit shortcut |
 
-The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`. Direct gamepad input is disabled so physical joystick axes cannot also trigger attacks or drops. On ARM64 Linux the host reads only gptokeyb2's `Fake Keyboard Mouse` event device directly, then delivers its mapped keys, mouse motion and clicks to the game. This bypasses desktop focus/event-delivery problems without re-enabling native joystick input. A software cursor is shown in menus. Use the right stick to point at a menu item and R2 to click; Start goes back. Two analog sticks are recommended for simultaneous movement and looking. Button labels follow the firmware's PortMaster controller mapping.
+The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`. Direct gamepad input is disabled so physical joystick axes cannot also trigger attacks or drops. On ARM64 Linux the host reads only gptokeyb2's `Fake Keyboard Mouse` event device directly, then delivers its mapped keys, mouse motion and clicks to the game. This bypasses desktop focus/event-delivery problems without re-enabling native joystick input. A software cursor is shown in menus; use the right stick to point and R2 to click a save or menu item, while A confirms and Start goes back. In gameplay, R2 attacks through the game's left-mouse action. Two analog sticks are recommended for simultaneous movement and looking. Button labels follow the firmware's PortMaster controller mapping.
 
-The host restores the matching keyboard bindings on launch, including Space for jump and left mouse for attack. Existing saves can be kept; no settings deletion is needed. Adjust mouse sensitivity in the game or the mapping file if needed.
+The package includes default controller settings at `delver/options.txt`, with jump set to Space (`key_jump: 62`) and mouse X/Y sensitivity set to `3`. On first launch, these defaults are copied to `save/options.txt` only when that save file is absent, preserving existing settings. R2 remains the left-mouse click for menu selection and gameplay attack.
 
 ## Display and performance
 
 Screen dimensions come from PortMaster. The host accepts 640x480, 720x480, 720x720, 1024x768, 1280x720 and other valid sizes. If detection is wrong, put a single line such as `720x480` in `delver/resolution.txt`; use `auto` to restore detection. Keep the game's fullscreen and window-size settings at their launch defaults on the handheld.
 
-Options menus automatically scale down when needed to fit the display, including graphics and controller settings. R2 attacks and L2 drops items using separate mouse and keyboard inputs.
+Options menus automatically scale down when needed to fit the display, including graphics and controller settings. R2 uses left mouse for menu clicks and gameplay attacks, L2 drops with Q, and B jumps with Space.
 
 The first launch disables shadows, FXAA and post-processing and chooses low graphics detail. These defaults can be adjusted in the game's graphics options. The host limits rendering to 60 frames per second; a lower device frame rate does not imply faster gameplay. Performance depends on the handheld and firmware. This is a 3D game, so test actual dungeon combat before judging performance from the menu.
 
