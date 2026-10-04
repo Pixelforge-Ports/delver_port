@@ -16,90 +16,53 @@ source "$controlfolder/control.txt"
 get_controls
 
 GAMEDIR="/${directory#/}/ports/delver"
+GAMEDATADIR="$GAMEDIR/gamedata"
 java_runtime="zulu17.54.21-ca-jre17.0.13-linux"
 jar_filename="delver.jar"
 
-cd "$GAMEDIR" || { pm_message "Delver: game folder missing."; pm_finish; exit 1; }
-exec > >(tee "$GAMEDIR/log.txt") 2>&1
+cd "$GAMEDIR"
+> "$GAMEDIR/log.txt" && exec > >(tee "$GAMEDIR/log.txt") 2>&1
 
 SAVEDIR="$GAMEDIR/save/"
 CACHEDIR="$GAMEDIR/cache/"
+$ESUDO mkdir -p "$SAVEDIR" "$CACHEDIR"
+
+[ -f "$GAMEDATADIR/$jar_filename" ] || { pm_message "Delver: Copy your owned delver.jar to delver/gamedata/delver.jar. See delver/log.txt."; sleep 5; exit 1; }
 
 weston_dir=/tmp/weston
-export JAVA_HOME="/tmp/javaruntime/"
-weston_mounted=0
-java_mounted=0
-weston_started=0
-mapper_pid=""
 
-cleanup() {
-  if [ -n "$mapper_pid" ]; then
-    kill "$mapper_pid" 2>/dev/null
-    wait "$mapper_pid" 2>/dev/null
-    mapper_pid=""
-  fi
-  if [ "$weston_started" = 1 ]; then
-    $ESUDO "$weston_dir/westonwrap.sh" cleanup
-  fi
-
-  if [ "$PM_CAN_MOUNT" != N ]; then
-    if [ "$java_mounted" = 1 ]; then
-      $ESUDO umount "$JAVA_HOME"
-    fi
-    if [ "$weston_mounted" = 1 ]; then
-      $ESUDO umount "$weston_dir"
-    fi
-  fi
-  pm_finish
-}
-
-fail() {
-  pm_message "Delver: $* See delver/log.txt."
-  sleep 5
-  cleanup
-  exit 1
-}
-$ESUDO mkdir -p "$SAVEDIR" "$CACHEDIR" || fail "Cannot create save folders."
-[ "$DEVICE_ARCH" = aarch64 ] || fail "64-bit ARM firmware is required."
-[ "$(getconf LONG_BIT)" = 64 ] || fail "64-bit userland is required."
-[ -f "$GAMEDIR/$jar_filename" ] || fail "Copy your owned delver.jar to delver/delver.jar."
-[ -n "$GPTOKEYB2" ] || fail "Update PortMaster for controller support."
-
-$ESUDO mkdir -p "${weston_dir}" || fail "Cannot create Weston directory."
+$ESUDO mkdir -p "${weston_dir}"
 weston_runtime="weston_pkg_0.2"
 if [ ! -f "$controlfolder/libs/${weston_runtime}.squashfs" ]; then
   if [ ! -f "$controlfolder/harbourmaster" ]; then
-    fail "This port requires the latest PortMaster to run, please go to https://portmaster.games/ for more info."
+     { pm_message "Delver: This port requires the latest PortMaster to run, please go to https://portmaster.games/ for more info. See delver/log.txt."; sleep 5; exit 1; }
   fi
-  $ESUDO "$controlfolder/harbourmaster" --quiet --no-check runtime_check "${weston_runtime}.squashfs" || fail "Cannot download Weston."
+  $ESUDO "$controlfolder/harbourmaster" --quiet --no-check runtime_check "${weston_runtime}.squashfs"
 fi
 if [[ "$PM_CAN_MOUNT" != "N" ]]; then
     $ESUDO umount "${weston_dir}" 2>/dev/null || true
 fi
 $ESUDO mount "$controlfolder/libs/${weston_runtime}.squashfs" "$weston_dir" \
-  || fail "Cannot mount Weston."
-weston_mounted=1
+  || { pm_message "Delver: Cannot mount Weston. See delver/log.txt."; sleep 5; exit 1; }
 
-$ESUDO mkdir -p "${JAVA_HOME}" || fail "Cannot create Java directory."
+export JAVA_HOME="/tmp/javaruntime/"
+$ESUDO mkdir -p "${JAVA_HOME}"
 if [ ! -f "$controlfolder/libs/${java_runtime}.squashfs" ]; then
   if [ ! -f "$controlfolder/harbourmaster" ]; then
-    fail "This port requires the latest PortMaster to run, please go to https://portmaster.games/ for more info."
+    { pm_message "Delver: This port requires the latest PortMaster to run, please go to https://portmaster.games/ for more info. See delver/log.txt."; sleep 5; exit 1; }
   fi
-  $ESUDO "$controlfolder/harbourmaster" --quiet --no-check runtime_check "${java_runtime}.squashfs" || fail "Cannot download Java."
+  $ESUDO "$controlfolder/harbourmaster" --quiet --no-check runtime_check "${java_runtime}.squashfs"
 fi
 if [[ "$PM_CAN_MOUNT" != "N" ]]; then
     $ESUDO umount "${JAVA_HOME}" 2>/dev/null || true
 fi
 $ESUDO mount "$controlfolder/libs/${java_runtime}.squashfs" "$JAVA_HOME" \
-  || fail "Cannot mount Java."
-java_mounted=1
+  || { pm_message "Delver: Cannot mount Java. See delver/log.txt."; sleep 5; exit 1; }
 export PATH="$JAVA_HOME/bin:$PATH"
 
-cd "$GAMEDIR" || fail "Cannot open the game directory."
-
-"$JAVA_HOME/bin/java" -Xmx64m -cp runtime/delver-host.jar org.portmaster.delver.VerifyGame "$GAMEDIR/$jar_filename" || fail "Unsupported or damaged game JAR. Check the README checksum."
-source "$GAMEDIR/display.inc" || fail "Display helper missing."
-delver_display_setup || fail "Use auto or WIDTHxHEIGHT in resolution.txt."
+"$JAVA_HOME/bin/java" -Xmx64m -cp runtime/delver-host.jar org.portmaster.delver.VerifyGame "$GAMEDATADIR/$jar_filename" || { pm_message "Delver: Unsupported or damaged game JAR. Check the README checksum. See delver/log.txt."; sleep 5; exit 1; }
+source "$GAMEDIR/display.inc" || { pm_message "Delver: Display helper missing. See delver/log.txt."; sleep 5; exit 1; }
+delver_display_setup || { pm_message "Delver: Use auto or WIDTHxHEIGHT in resolution.txt. See delver/log.txt."; sleep 5; exit 1; }
 printf 'Firmware: %s; display: %s\n' "$CFW_NAME" "$delver_display_description"
 export SDL_TOUCH_MOUSE_EVENTS=0
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
@@ -107,20 +70,23 @@ export HOTKEY=back
 $GPTOKEYB2 java -c "$GAMEDIR/delver.ini" > /dev/null &
 mapper_pid=$!
 sleep 1
-kill -0 "$mapper_pid" 2>/dev/null || fail "Controller mapper failed to start."
+kill -0 "$mapper_pid" 2>/dev/null || { pm_message "Delver: Controller mapper failed to start. See delver/log.txt."; sleep 5; exit 1; }
 pm_platform_helper "$JAVA_HOME/bin/java"
 
-weston_started=1
-$ESUDO env "${display_env[@]}" "$weston_dir/westonwrap.sh" headless noop kiosk crusty_glx_gl4es \
+$ESUDO env "${display_env[@]}" "LD_LIBRARY_PATH=$GAMEDIR/libs.${DEVICE_ARCH}:$LD_LIBRARY_PATH" "$weston_dir/westonwrap.sh" headless noop kiosk crusty_glx_gl4es \
   "PATH=$JAVA_HOME/bin:$PATH" "JAVA_HOME=$JAVA_HOME" "HOME=$SAVEDIR" \
   "XDG_DATA_HOME=$SAVEDIR" "XDG_CONFIG_HOME=$SAVEDIR/config" \
   "XDG_CACHE_HOME=$CACHEDIR" "WAYLAND_DISPLAY=" \
   "$JAVA_HOME/bin/java" -Xms32m -Xmx384m -XX:+UseSerialGC \
   "-Duser.home=$SAVEDIR" "-Djava.io.tmpdir=$CACHEDIR" \
-  "-Ddelver.jar=$GAMEDIR/$jar_filename" --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED \
+  "-Ddelver.jar=$GAMEDATADIR/$jar_filename" --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED \
   -Ddelver.fullscreen=true -Ddelver.mappedInput=true "${display_java[@]}" \
-  -cp "$GAMEDIR/runtime/delver-host.jar:$GAMEDIR/runtime/lib/*:$GAMEDIR/$jar_filename" org.portmaster.delver.Main
+  -cp "$GAMEDIR/runtime/delver-host.jar:$GAMEDIR/runtime/lib/*:$GAMEDATADIR/$jar_filename" org.portmaster.delver.Main
 
-status=$?
-cleanup
-exit "$status"
+$ESUDO "$weston_dir/westonwrap.sh" cleanup
+if [[ "$PM_CAN_MOUNT" != "N" ]]; then
+  $ESUDO umount "${weston_dir}"
+  $ESUDO umount "${JAVA_HOME}"
+fi
+
+pm_finish

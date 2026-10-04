@@ -6,3 +6,9 @@ package/delver/delver.jar
 package/delver/save/
 package/delver/cache/
 package/delver/log.txt
+
+ports/
+package/delver/gamedata/*.jar
+package/delver/runtime/*.jar
+package/delver/runtime/lib/*.jar
+package/delver/resolution.txt

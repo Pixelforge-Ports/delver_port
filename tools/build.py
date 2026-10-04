@@ -1,7 +1,31 @@
-"""Build Delver.zip without Steam files. Python 3.9+ and a JDK 17+ are required."""
+"""Build delver.zip without Steam files. Python 3.9+ and a JDK 17+ are required."""
 import argparse, hashlib, json, os, subprocess, urllib.request, zipfile
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
+SHA256 = 'a2d58e87b09f588ff8389508e43accf7d3c6ce949b5aa4d31d6380574ec095ae'
+
+def package_snapshot():
+    package = ROOT/'package'
+    return {
+        path.relative_to(package).as_posix(): hashlib.sha256(path.read_bytes()).hexdigest()
+        for path in package.rglob('*') if path.is_file()
+    }
+
+
+def ensure_package_unchanged(before):
+    after = package_snapshot()
+    if before != after:
+        changed = sorted(set(before)^set(after) | {name for name in before.keys() & after.keys() if before[name] != after[name]})
+        raise SystemExit('Build changed package/ file(s): '+', '.join(changed))
+    print('PACKAGE_UNCHANGED', len(after), 'files')
+
+
+def package(generated_host=None):
+    from portmaster_package import export
+    export(ROOT, generated_host)
+    from verify_package import verify
+    verify(ROOT, generated_host)
+
 
 def put(archive,name,data):
  info=zipfile.ZipInfo(name,(2026,9,13,0,0,0));info.create_system=3
@@ -23,7 +47,7 @@ def dependencies(offline=False,testing=False):
  return entries
 
 def runtime(entries):
- folder=ROOT/'package/delver/runtime/lib';folder.mkdir(parents=True,exist_ok=True)
+ folder=ROOT/'build/artifacts/runtime/lib';folder.mkdir(parents=True,exist_ok=True)
  names=[]
  for e in entries:
   if e['role']=='runtime':
@@ -37,23 +61,41 @@ def runtime(entries):
   put(out,'com/badlogic/gdx/math/Matrix4.class',source.read('com/badlogic/gdx/math/Matrix4.class'))
  names.append('gdx-matrix-compat.jar')
  manifest=[dict(name=n,sha256=hashlib.sha256((folder/n).read_bytes()).hexdigest()) for n in sorted(names)]
- (ROOT/'build/runtime-files.json').write_text(json.dumps(manifest,indent=2)+'\n')
+ (ROOT/'build/artifacts/runtime-files.json').write_text(json.dumps(manifest,indent=2)+'\n')
  return manifest
 
 def main():
  parser=argparse.ArgumentParser(description=__doc__)
- parser.add_argument('--jdk',type=Path,required=True);parser.add_argument('--offline',action='store_true')
- a=parser.parse_args();javac=a.jdk/'bin'/('javac.exe' if os.name=='nt' else 'javac')
+ parser.add_argument('--jdk',type=Path)
+ parser.add_argument('--offline',action='store_true')
+ parser.add_argument('--package-only',action='store_true')
+ parser.add_argument('--game-jar',type=Path,help='Optional owned-game fingerprint check; not needed for compilation')
+ a=parser.parse_args()
+ before=package_snapshot()
+ if a.package_only:
+  package()
+  ensure_package_unchanged(before)
+  return
+ if not a.jdk:parser.error('--jdk is required')
+ javac=a.jdk.resolve()/'bin'/('javac.exe' if os.name=='nt' else 'javac')
  if not javac.is_file():parser.error('Compiler missing; pass your installed JDK folder in double quotes.')
+ if a.game_jar and hashlib.sha256(a.game_jar.read_bytes()).hexdigest()!=SHA256:parser.error('Unsupported game JAR fingerprint')
  entries=dependencies(a.offline);runtime(entries)
  classes=ROOT/'build/classes';classes.mkdir(parents=True,exist_ok=True)
  for p in classes.rglob('*.class'):p.resolve().relative_to(classes.resolve());p.unlink()
  cp=os.pathsep.join(str(ROOT/'build/dependencies'/e['name']) for e in entries if e['name'] in ['gdx-1.9.9.jar','gdx-backend-lwjgl3-1.9.9.jar'])
  subprocess.run([str(javac),'--release','8','-Xlint:-options','-encoding','UTF-8','-cp',cp,'-d',str(classes),*map(str,sorted((ROOT/'src').rglob('*.java')))],check=True)
- with zipfile.ZipFile(ROOT/'package/delver/runtime/delver-host.jar','w') as out:
-  for p in sorted(classes.rglob('*.class')):put(out,p.relative_to(classes).as_posix(),p.read_bytes())
- from portmaster_package import export
- export(ROOT)
- from verify_package import verify
- verify(ROOT)
+ host=ROOT/'build/artifacts/delver-host.jar'
+ temporary=host.with_suffix('.jar.tmp')
+ host_classes=sorted((classes/'org/portmaster/delver').rglob('*.class'))
+ if not host_classes:raise SystemExit('No Delver host classes were produced')
+ with zipfile.ZipFile(temporary,'w') as out:
+  for p in host_classes:put(out,p.relative_to(classes).as_posix(),p.read_bytes())
+ with zipfile.ZipFile(temporary) as archive:
+  if archive.testzip() is not None:raise SystemExit('Generated host JAR failed its archive check')
+ temporary.replace(host)
+ package(host)
+ ensure_package_unchanged(before)
+
+
 if __name__=='__main__':main()

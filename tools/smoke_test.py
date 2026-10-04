@@ -5,8 +5,12 @@ from build import ROOT,dependencies
 p=argparse.ArgumentParser(description=__doc__);p.add_argument('--java',type=Path,required=True);p.add_argument('--game-jar',type=Path,required=True);p.add_argument('--all-resolutions',action='store_true');p.add_argument('--width',type=int);p.add_argument('--height',type=int);p.add_argument('--audio',action='store_true');a=p.parse_args()
 if os.name!='nt':p.error('This smoke helper currently uses Windows test natives; the shipping package uses ARM64 Linux natives.')
 entries=dependencies(testing=True)
-cp=[str(ROOT/'package/delver/runtime/delver-host.jar')]
-cp += [str(x) for x in sorted((ROOT/'package/delver/runtime/lib').glob('*.jar')) if 'linux-arm64' not in x.name and x.name!='gdx-arm64-natives.jar']
+host=ROOT/'build/artifacts/delver-host.jar'
+if not host.is_file():host=ROOT/'package/delver/runtime/delver-host.jar'
+cp=[str(host)]
+runtime=ROOT/'build/artifacts/runtime/lib'
+if not runtime.is_dir():runtime=ROOT/'package/delver/runtime/lib'
+cp += [str(x) for x in sorted(runtime.glob('*.jar')) if 'linux-arm64' not in x.name and x.name!='gdx-arm64-natives.jar']
 cp += [str(ROOT/'build/dependencies'/e['name']) for e in entries if e['role'] in ['test','native-source']]
 cp += [str(a.game_jar.resolve())]
 if (a.width is None) != (a.height is None):p.error('--width and --height must be used together')

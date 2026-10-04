@@ -25,7 +25,7 @@ Scope of this port license
 This license covers this project's original Java adaptation host, launcher
 modifications, display helper, controller configuration, build and verification
 tools, tests, handwritten compile-only declarations and original documentation.
-Port maintained by Pixelforge ports (Ronax).
+Port maintained by Pixelforge Ports (Ronax).
 
 Launcher portions adapted from BinaryCounter's Westonpack libGDX example retain
 the upstream MIT notice below. It applies to the adapted example code, not all

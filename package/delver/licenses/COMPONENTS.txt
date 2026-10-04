@@ -47,3 +47,5 @@ stb
 
 Java and Westonpack are obtained separately by PortMaster at installation
 time and are not distributed by this ZIP.
+
+libjpeg.so.8: LICENSE-libjpeg-turbo.txt (libjpeg-turbo compatible JPEG license).

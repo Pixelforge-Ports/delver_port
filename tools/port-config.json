@@ -2,8 +2,17 @@
   "id": "delver",
   "title": "Delver",
   "script": "Delver.sh",
-  "zip": "Delver.zip",
-  "game_file": "delver.jar",
+  "zip": "delver.zip",
+  "game_file": "gamedata/delver.jar",
   "runtime_libraries": true,
-  "mapping": "delver.ini"
+  "mapping": "delver.ini",
+  "directories": [
+    "gamedata",
+    "libs.aarch64"
+  ],
+  "library_lock": "bundled-libraries.json",
+  "generated_runtime": true,
+  "extra_files": [
+    "options.txt"
+  ]
 }

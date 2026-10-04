@@ -1,0 +1,2 @@
+Place your owned delver.jar here.
+See delver/README.md for the supported build and SHA-256.

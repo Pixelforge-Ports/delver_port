@@ -1,13 +1,19 @@
-Delver testing build
-Porter: Pixelforge ports (Ronax)
+Delver - PortMaster testing
+Porter: Pixelforge Ports (Ronax)
+
 Game: https://store.steampowered.com/app/249630/Delver/
+Package: delver.zip
+Install:
+Update PortMaster, put delver.zip in its autoinstall folder and open PortMaster.
+Stay online for the Java 17 and Westonpack downloads if needed.
+Supply delver.jar from your owned Windows build (Delver v1.08; Steam depot 249631, manifest 6680730644186394716).
+Destination: <ports directory>/delver/gamedata/delver.jar.
 
-Install Delver.zip through PortMaster's autoinstall folder. Copy your owned delver.jar to ports/delver/delver.jar.
-Requires Delver v1.08 from Steam depot 249631, manifest 6680730644186394716.
-Steam console command: download_depot 249630 249631 6680730644186394716
-Follow delver.md for the checksum and installation instructions. No game files are included.
+In the Steam console, run: download_depot 249630 249631 6680730644186394716
+Copy delver.jar from the completed Windows depot download unchanged.
+See the installed delver/README.md for the checksum and download instructions.
 
-The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`. Direct gamepad input is disabled so physical joystick axes cannot also trigger attacks or drops. Use the right stick to point at a menu item, R2 to click it, A to confirm, and Start to go back. In gameplay, R2's left-mouse click activates the attack action. Two analog sticks are recommended for simultaneous movement and looking. Button labels follow the firmware's PortMaster controller mapping.
+Controls:
 
 | Button | Action |
 | --- | --- |
@@ -27,25 +33,30 @@ The port uses gptokeyb2 keyboard and mouse emulation through `delver/delver.ini`
 | Select (hold) + D-pad | Arrow keys |
 | Select + Start | PortMaster exit shortcut |
 
-Please verify: right-stick movement never attacks or drops an item; R2 selects save/menu items and attacks during gameplay; L2 drops; B jumps while grounded; right-stick cursor movement and R2 clicks work in menus and inventory. Also check that the complete options menus fit the display. Test with existing saves as well as fresh settings. The startup log should report input=gptokeyb2 keyboard/mouse and native controllers=0. Control debug output is disabled; error logging remains enabled. Verify the software cursor, R2 menu clicks, inventory dragging and continuous turning past the screen edges. The tester reports all controls working; further device and firmware testing is welcome.
+Use the right stick to point and **R2** to click menu or inventory items.
+**Select + A** sends Enter. **B** jumps, **L2** drops an item and **R2** attacks.
+The supplied `delver/options.txt` sets jump to Space and mouse X/Y sensitivity to `3`.
+It is copied to `delver/save/options.txt` only on first launch, preserving existing settings.
+Two analog sticks are recommended for movement and looking.
 
-CFW tests (not yet verified on handheld):
-[ ] muOS: RG34XX SP / other H700 RGXX
-[ ] ArkOS / dArkOS: R36S
-[ ] AmberELEC
-ROCKNIX:
-[ ] LibMali
-[ ] Panfrost
-[ ] Adreno
-[ ] Knulli
-[ ] Other compatible ARM64 firmware
-
-Resolutions:
+Testing checklist (include exact device, firmware version, graphics driver and result; mark only configurations you tested):
+[ ] muOS: RG34XX SP / other RGXX; fbdev or LibMali
+[ ] ROCKNIX: Adreno
+[ ] ROCKNIX: Panfrost
+[ ] ROCKNIX: LibMali
+[ ] dArkOS: R36S; KMSDRM / LibMali
+[ ] Knulli: specify device; KMSDRM / LibMali
+[ ] AmberELEC: specify device; legacy LibMali
+[ ] ArkOS (optional): specify device and graphics driver
+[ ] Other compatible ARM64 firmware: specify device and graphics driver
 [ ] 640x480
 [ ] 720x480
 [ ] 720x720
 [ ] 1024x768
 [ ] 1280x720
 
-Please test first launch, menus, both sticks, face buttons, triggers, combat, inventory, item cycling, sound/music, normal speed, save/reload, suspend/resume and exit. Include dungeon frame rates and your graphics settings where possible.
-For problems attach delver/log.txt and reproduction steps. Do not attach purchased game files or personal information.
+Please test startup, menus, all controls, sound/music, normal gameplay speed,
+save/reload, suspend/resume and exit. Report performance during actual gameplay.
+
+For failures attach delver/log.txt and steps to reproduce.
+Do not upload purchased game files, installers or personal information.
