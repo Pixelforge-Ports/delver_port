@@ -83,7 +83,7 @@ def main():
  entries=dependencies(a.offline);runtime(entries)
  classes=ROOT/'build/classes';classes.mkdir(parents=True,exist_ok=True)
  for p in classes.rglob('*.class'):p.resolve().relative_to(classes.resolve());p.unlink()
- cp=os.pathsep.join(str(ROOT/'build/dependencies'/e['name']) for e in entries if e['name'] in ['gdx-1.9.9.jar','gdx-backend-lwjgl3-1.9.9.jar'])
+ cp=os.pathsep.join(str(ROOT/'build/dependencies'/e['name']) for e in entries if e['name'] in ['gdx-1.9.9.jar','gdx-backend-lwjgl3-1.9.9.jar','gdx-controllers-1.9.9.jar','gdx-controllers-lwjgl3-1.9.9.jar'])
  subprocess.run([str(javac),'--release','8','-Xlint:-options','-encoding','UTF-8','-cp',cp,'-d',str(classes),*map(str,sorted((ROOT/'src').rglob('*.java')))],check=True)
  host=ROOT/'build/artifacts/delver-host.jar'
  temporary=host.with_suffix('.jar.tmp')

@@ -1,5 +1,11 @@
 [
   {
+    "name": "gdx-controllers-1.9.9.jar",
+    "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx-controllers/1.9.9/gdx-controllers-1.9.9.jar",
+    "role": "compile",
+    "sha256": "e2cbbfc7262591d63ffa480b5873527ee066971027087b0386b2147470c23e09"
+  },
+  {
     "name": "gdx-1.9.9.jar",
     "url": "https://repo.maven.apache.org/maven2/com/badlogicgames/gdx/gdx/1.9.9/gdx-1.9.9.jar",
     "role": "compile",

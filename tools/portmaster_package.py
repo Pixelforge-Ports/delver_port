@@ -136,7 +136,7 @@ def public_files(root, generated_host=None):
             raise ValueError('Bundled library checksum mismatch: '+name)
     required = {
         config['script'], 'port.json', 'README.md', 'gameinfo.xml', 'screenshot.png', 'cover.png',
-        game+'/display.inc', game+'/'+config['mapping'], host_name,
+        game+'/display.inc', host_name,
         *[game+'/'+name for name in config.get('extra_files', [])],
     }
     missing = sorted(required-set(files))

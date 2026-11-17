@@ -31,26 +31,11 @@ Back up **`delver/save/`** before updating. If startup fails, check **`delver/lo
 
 ## Controls
 
-| Button | Action |
-| --- | --- |
-| Left stick / D-pad | Move forward/backward and strafe (WASD) |
-| Right stick | Look / move menu cursor |
-| A | Use / interact (E) |
-| B | Jump (Space) |
-| X | Inventory (I) |
-| Y | Map (M) |
-| L1 / R1 | Previous / next item |
-| L2 | Drop item (Q) |
-| R2 | Attack / click menu or inventory item (left mouse) |
-| R3 (hold) | Slower mouse movement |
-| Start | Pause / options / back (Escape) |
-| Select (hold) + A | Enter / confirm |
-| Select (hold) + B | Escape / back |
-| Select (hold) + D-pad | Arrow keys |
-| Select + Start | PortMaster exit shortcut |
-
-Use the right stick to point and **R2** to click menu or inventory items.
-**Select + A** sends Enter. **B** jumps, **L2** drops an item and **R2** attacks.
-The supplied `delver/options.txt` sets jump to Space and mouse X/Y sensitivity to `3`.
-It is copied to `delver/save/options.txt` only on first launch, preserving existing settings.
+Controls use Delver's native Xbox 360 gamepad layout. The left stick moves and
+the right stick looks; use the in-game gamepad options to view or change bindings.
+Menu prompts use Xbox button names. **B** jumps during gameplay and goes back
+in menus. Select + Start exits through PortMaster.
 Two analog sticks are recommended for movement and looking.
+
+The supplied `delver/options.txt` is copied to `delver/save/options.txt` only on
+first launch, preserving existing settings and gamepad bindings.

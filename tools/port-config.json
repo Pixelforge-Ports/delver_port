@@ -5,7 +5,6 @@
   "zip": "delver.zip",
   "game_file": "gamedata/delver.jar",
   "runtime_libraries": true,
-  "mapping": "delver.ini",
   "directories": [
     "gamedata",
     "libs.aarch64"

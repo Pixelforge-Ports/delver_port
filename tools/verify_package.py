@@ -1,5 +1,4 @@
 """Validate the packaged PortMaster files and their exported copies."""
-import configparser
 import io
 import json
 from pathlib import Path, PurePosixPath
@@ -106,10 +105,10 @@ def verify(root, generated_host=None):
     require(gameinfo.findtext('path') == './'+config['script'], 'Wrong gameinfo path')
     require(gameinfo.findtext('image') == './'+game+'/cover.png', 'Wrong gameinfo cover path')
     require(gameinfo.findtext('developer') and gameinfo.findtext('desc'), 'Incomplete gameinfo')
-    mapping_name = game+'/'+config['mapping']
-    require(config['mapping'].endswith('.ini') and mapping_name in files, 'Missing gptokeyb2 INI mapping')
     launcher = files[config['script']].decode('utf-8')
-    require('$GPTOKEYB2 java -c ' in launcher, 'Launcher must use gptokeyb2')
+    require('$GPTOKEYB2 java -x ' in launcher, 'Launcher must use gptokeyb2 Xbox 360 mode')
+    require('$GPTOKEYB2 java -c ' not in launcher and game+'/delver.ini' not in files,
+            'Xbox 360 mode must not ship an unused keyboard/mouse mapping')
     require('$GPTOKEYB ' not in launcher and 'TEXTINPUTINTERACTIVE' not in launcher,
             'Legacy mapper setup')
     game_data = game_data_path(root, config).as_posix()
@@ -118,30 +117,17 @@ def verify(root, generated_host=None):
             'Launcher data directory disagrees with port.json')
     require('"$GAMEDATADIR/$jar_filename"' in launcher,
             'Launcher must validate and run the game JAR from gamedata/')
-    controls = configparser.ConfigParser(interpolation=None, strict=True)
-    controls.read_string(files[mapping_name].decode('utf-8'))
-    require(controls['controls']['start'] == 'esc', 'Start must open the game menu')
-    require(controls['controls'].get('overlay') == 'clear', 'Explicit root controls required')
-    for section in controls.sections():
-        for key, value in controls[section].items():
-            require(not key.endswith('_hk'), 'Use a v2 hotkey state')
-            if value.startswith(('hold_state ', 'push_state ', 'set_state ')):
-                require('controls:'+value.split()[1] in controls, 'Unknown control state')
-
-    require(controls['controls']['right_analog'] == 'mouse_movement', 'Right stick must only move the mouse')
-    require(controls['controls']['l2'] == 'q' and controls['controls']['r2'] == 'mouse_left', 'R2 must click menus and attack')
-    require(controls['controls']['b'] == 'space', 'Jump must be mapped')
     main_source = (root/'src/org/portmaster/delver/Main.java').read_text(encoding='utf-8')
-    require('mouseButton1Action").set(options.getField("instance").get(null),valueOf.invoke(null,"ATTACK"))' in main_source, 'Mouse clicks must activate gameplay attack')
-    require('Input.Keys.CONTROL_LEFT,Input.Keys.Q,Input.Keys.SPACE' in main_source, 'Jump must stay independently bound to Space')
-    mapped_source = (root/'src/org/portmaster/delver/MappedInput.java').read_text(encoding='utf-8')
-    require('case 29:return Input.Keys.CONTROL_LEFT' in mapped_source and 'case 57:return Input.Keys.SPACE' in mapped_source, 'Mapped Ctrl/Space events must reach the game correctly')
+    require('com.badlogic.gdx.controllers.lwjgl3.Lwjgl3ControllerManager' in main_source and
+            'ControllerManagerStub' not in main_source, 'Enable the native LWJGL3 controller backend')
+    require('org.portmaster.delver.XboxControllerManager' in main_source,
+            'Linux must use the Xbox axis compatibility backend')
     defaults = json.loads(files[game+'/options.txt'])
     require(defaults.get('key_jump') == 62, 'Packaged options must map jump to Space')
     require(defaults.get('mouseXSensitivity') == 3 and defaults.get('mouseYSensitivity') == 3, 'Packaged options must include default mouse sensitivity')
     require('boolean fresh=!java.nio.file.Files.exists(savedOptions)' in main_source and 'Files.copy(defaultOptions,savedOptions)' in main_source, 'Default options must copy to a missing save file only')
-    require('-Ddelver.mappedInput=true' in launcher and 'export SDL_TOUCH_MOUSE_EVENTS=0' in launcher,
-            'Keep Delver mapped keyboard and mouse delivery')
+    require('-Ddelver.mappedInput=false' in launcher and 'export SDL_TOUCH_MOUSE_EVENTS=0' in launcher,
+            'Native controller input must bypass the keyboard/mouse wrapper')
     require(game+'/runtime/lib/gdx-controllers-lwjgl3-1.9.9.jar' in files,
             'Missing Delver controller API')
     for component in ('libGDX', 'LWJGL', 'GLFW', 'OpenAL-Soft', 'STB'):

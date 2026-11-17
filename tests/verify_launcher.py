@@ -35,7 +35,6 @@ for case in ['missing-data','success','no-getconf','game-error','bad-data','bad-
     write(data/'libs.aarch64/libjpeg.so.8','test library fixture')
     (pm/'libs').mkdir(parents=True,exist_ok=True)
     shutil.copyfile(ROOT/'package'/game/'display.inc',data/'display.inc')
-    shutil.copyfile(ROOT/'package'/game/config['mapping'],data/config['mapping'])
     if case != 'missing-data': write(data/config['game_file'],'test fixture, not game data')
     if case == 'bad-resolution': write(data/'resolution.txt','invalid')
     if case not in ('download-error','missing-portmaster'):
@@ -82,7 +81,7 @@ if [[ "$TEST_GAME" == mewnbase ]]; then printf '1.0.1' > "$TEST_ROOT/ports/mewnb
 exit 0
 ''')
     write(fixtures/'probes/mapper','''#!/bin/bash
-[[ "$TEST_MAPPER" == 1 && "$1" == java && "$2" == -c && "$3" == */"$TEST_MAPPING" ]] || exit 2
+[[ "$TEST_MAPPER" == 1 && "$#" == 2 && "$1" == java && "$2" == -x ]] || exit 2
 echo mapper >> "$TEST_ROOT/events"
 exec /usr/bin/sleep 0.5
 ''')
@@ -97,7 +96,7 @@ fi
 [[ "$WESTON_HEADLESS_WIDTH" == 720 && "$WESTON_HEADLESS_HEIGHT" == 480 ]] || exit 4
 [[ "$*" == *"-D$TEST_GAME.width=720"* && "$*" == *"-D$TEST_GAME.height=480"* ]] || exit 5
 [[ "$*" == *"-D$TEST_GAME.jar=$TEST_ROOT/ports/$TEST_GAME/gamedata/$TEST_JAR"* ]] || exit 8
-[[ "$*" == *'-Ddelver.mappedInput=true'* && "$*" == *'runtime/lib/*:'* ]] || exit 13
+[[ "$*" == *'-Ddelver.mappedInput=false'* && "$*" == *'runtime/lib/*:'* ]] || exit 13
 [[ "$SDL_TOUCH_MOUSE_EVENTS" == 0 ]] || exit 14
 [[ "$*" == *'--add-opens=java.base/java.lang=ALL-UNNAMED'* ]] || exit 15
 [[ "$*" == *'-Xmx384m'* && "$*" == *"HOME=$TEST_ROOT/ports/delver/save/"* ]] || exit 16
@@ -114,7 +113,7 @@ exit 0
     # Force fixture discovery even on a machine with a real PortMaster installed.
     launcher=launcher.replace('/opt/system/Tools/PortMaster',sf+'/absent1').replace('/opt/tools/PortMaster',sf+'/absent2')
     write(fixtures/'launcher.sh',launcher)
-    env=dict(os.environ,TEST_ROOT=sf,TEST_CASE=case,TEST_GAME=game,TEST_MAPPING=config['mapping'],TEST_JAR=Path(config['game_file']).name)
+    env=dict(os.environ,TEST_ROOT=sf,TEST_CASE=case,TEST_GAME=game,TEST_JAR=Path(config['game_file']).name)
     command='export PATH=/usr/bin:$PATH; export HOME="$TEST_ROOT/home" XDG_DATA_HOME="$TEST_ROOT/home/.local/share"; chmod +x "$TEST_ROOT/probes/"* "$TEST_ROOT/home/.local/share/PortMaster/harbourmaster"; bash "$TEST_ROOT/launcher.sh"'
     result=subprocess.run([bash,'-c',command],env=env,capture_output=True,text=True,timeout=20)
     write(fixtures/'test.log',result.stdout+result.stderr)

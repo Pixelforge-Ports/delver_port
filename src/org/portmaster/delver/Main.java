@@ -18,7 +18,7 @@ public final class Main implements ApplicationListener {
  public static void main(String[] args) throws Exception {
   VerifyGame.check(Paths.get(System.getProperty("delver.jar","delver.jar")));
   loadNatives();
-  Class.forName("com.badlogic.gdx.controllers.Controllers").getField("preferredManager").set(null,"com.badlogic.gdx.controllers.ControllerManagerStub");
+  Class.forName("com.badlogic.gdx.controllers.Controllers").getField("preferredManager").set(null,System.getProperty("os.name").startsWith("Windows")?"com.badlogic.gdx.controllers.lwjgl3.Lwjgl3ControllerManager":"org.portmaster.delver.XboxControllerManager");
   Class.forName("com.interrupt.api.steam.SteamApi").getField("api").set(null,Class.forName("com.interrupt.api.steam.NullSteamApi").getDeclaredConstructor().newInstance());
   Class<?> options=Class.forName("com.interrupt.dungeoneer.game.Options");
   Path savedOptions=Paths.get("save/options.txt");
@@ -68,12 +68,24 @@ public final class Main implements ApplicationListener {
    if(Boolean.getBoolean("delver.mappedInput"))mappedInput=new MappedInput(Gdx.input);
    game=(ApplicationListener)Class.forName("com.interrupt.dungeoneer.GameApplication").getDeclaredConstructor().newInstance();
    game.create();
-   configureKeyboardControls();
+   if(mappedInput!=null)configureKeyboardControls();else configureGamepadControls();
    int controllers=((com.badlogic.gdx.utils.Array<?>)Class.forName("com.badlogic.gdx.controllers.Controllers").getMethod("getControllers").invoke(null)).size;
-   if(controllers!=0)throw new IllegalStateException("Direct controller input must be disabled");
    start=System.nanoTime();
-   System.out.println("GAME_CREATE_OK Delver v1.08; offline; input=gptokeyb2 keyboard/mouse; native controllers=0; attack=R2(mouse); drop=L2; jump=B(space)");
+   System.out.println("GAME_CREATE_OK Delver v1.08; offline; input=native Xbox 360; native controllers="+controllers);
   }catch(Exception e){throw new RuntimeException(e);}
+ }
+ private static void configureGamepadControls() throws Exception {
+  Class<?> actions=Class.forName("com.interrupt.dungeoneer.input.Actions");
+  Class<?> action=Class.forName("com.interrupt.dungeoneer.input.Actions$Action");
+  Object jump=action.getMethod("valueOf",String.class).invoke(null,"JUMP");
+  Class<?> binding=Class.forName("com.interrupt.dungeoneer.input.GamepadBinding");
+  Class<?> input=Class.forName("com.interrupt.dungeoneer.input.GamepadBinding$GamepadInputType");
+  Object button=input.getMethod("valueOf",String.class).invoke(null,"BUTTON");
+  Object jumpBinding=binding.getConstructor(int.class,input).newInstance(1,button);
+  // v1.08 omits Jump from its Xbox defaults; retain it when options reload.
+  Class<?> defaults=Class.forName("com.interrupt.dungeoneer.input.GamepadDefinition");
+  for(Object bindings:new Object[]{defaults.getField("gamepadBindings").get(null),actions.getField("gamepadBindings").get(null)})
+   bindings.getClass().getMethod("put",Object.class,Object.class).invoke(bindings,jump,jumpBinding);
  }
  private static void configureKeyboardControls() throws Exception {
   Class<?> actions=Class.forName("com.interrupt.dungeoneer.input.Actions");

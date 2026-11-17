@@ -67,7 +67,7 @@ printf 'Firmware: %s; display: %s\n' "$CFW_NAME" "$delver_display_description"
 export SDL_TOUCH_MOUSE_EVENTS=0
 export SDL_GAMECONTROLLERCONFIG="$sdl_controllerconfig"
 export HOTKEY=back
-$GPTOKEYB2 java -c "$GAMEDIR/delver.ini" > /dev/null &
+$GPTOKEYB2 java -x > /dev/null &
 mapper_pid=$!
 sleep 1
 kill -0 "$mapper_pid" 2>/dev/null || { pm_message "Delver: Controller mapper failed to start. See delver/log.txt."; sleep 5; exit 1; }
@@ -80,7 +80,7 @@ $ESUDO env "${display_env[@]}" "LD_LIBRARY_PATH=$GAMEDIR/libs.${DEVICE_ARCH}:$LD
   "$JAVA_HOME/bin/java" -Xms32m -Xmx384m -XX:+UseSerialGC \
   "-Duser.home=$SAVEDIR" "-Djava.io.tmpdir=$CACHEDIR" \
   "-Ddelver.jar=$GAMEDATADIR/$jar_filename" --add-opens=java.base/java.lang=ALL-UNNAMED --add-opens=java.base/java.util=ALL-UNNAMED \
-  -Ddelver.fullscreen=true -Ddelver.mappedInput=true "${display_java[@]}" \
+  -Ddelver.fullscreen=true -Ddelver.mappedInput=false "${display_java[@]}" \
   -cp "$GAMEDIR/runtime/delver-host.jar:$GAMEDIR/runtime/lib/*:$GAMEDATADIR/$jar_filename" org.portmaster.delver.Main
 
 $ESUDO "$weston_dir/westonwrap.sh" cleanup
