@@ -63,7 +63,9 @@ def verify(root, generated_host=None):
     require(attr.get('availability') == 'paid' and attr.get('rtr') is False and attr.get('exp') is False,
             'Wrong BYO-data flags')
     require(attr.get('arch') == ['aarch64'], 'Wrong architecture')
-    require(attr.get('runtime') == ['weston_pkg_0.2.squashfs', 'zulu17.54.21-ca-jre17.0.13-linux.squashfs'],
+    runtimes = attr.get('runtime')
+    require(isinstance(runtimes, list) and len(runtimes) == 2 and
+            set(runtimes) == {'weston_pkg_0.2.squashfs', 'zulu17.54.21-ca-jre17.0.13-linux.squashfs'},
             'Wrong runtimes')
     require(all(isinstance(store, dict) and set(store) == {'name', 'gameurl', 'developerurl'}
                 for store in attr.get('store', [])), 'Invalid store metadata')
